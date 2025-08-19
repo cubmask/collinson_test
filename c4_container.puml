@@ -1,0 +1,37 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4.puml
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+Person(user, "Traveler")
+System_Boundary(pp, "Priority Pass Platform") {
+  Container(pp_app, "PP Mobile App","Journey UI, embedded ride widget")
+  Container(pp_gate, "PP API Gateway","APIs, authz, rate limits, load balancer")
+  Container(journey, "Journey Orchestrator", "Combines flight, traffic, and ride info to recommend departure time")
+  Container(pp_lounge, "Lounge Inventory Service", "Entitlements, reservations, capacity")
+  Container(pp_partner, "Partner Integration Layer", "GraphQL/REST for Taxi partner + PP content widget")
+  ContainerDb(pp_db, "PP Data", "Users, entitlements, reservations")
+  ContainerQueue(que_ser, "Event Bus", "Ride, flight, and reservation events")
+}
+
+System_Boundary(taxi, "Taxi Platform") {
+  Container(taxi_app, "Taxi Mobile App", "Ride UI, embedded PP widget")
+  Container(taxi_gate, "Taxi API Gateway", "Quotes, pricing, booking, driver tracking")
+}
+
+System_Ext(flight, "Flight Status Provider", "Schedules/gates/delays")
+System_Ext(traffic, "Maps/Traffic API", "Travel times")
+
+Rel(user, pp_app, "Uses")
+Rel(pp_app, pp_gate, "HTTPS/JSON")
+Rel(pp_gate, journey, "Plan journey")
+Rel(pp_gate, pp_lounge, "Search lounges/reserve")
+Rel(pp_gate, pp_partner, "Partner calls")
+Rel(pp_partner, taxi_gate, "Ride quotes/booking", "OAuth2 client credentials")
+Rel(journey, flight, "Flight status")
+Rel(journey, traffic, "Travel time")
+Rel(pp_lounge, pp_db, "R/W")
+Rel(pp_gate, que_ser, "Publish events")
+Rel(taxi_app, taxi_gate, "Uses")
+Rel(taxi_gate, pp_partner, "Fetch PP content widget/api")
+
+@enduml
