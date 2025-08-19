@@ -1,0 +1,17 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4.puml
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+Person(user, "Traveller", "Priority Pass member / Taxi rider")
+System(prioritypass, "Priority Pass App", "Plans & views journeys, lounges, benefits, and airport experience")
+System(taxiapp, "Global Taxi App", "Request rides, track drivers, pay")
+System_Ext(flight, "Flight Status Provider", "Schedules, gates, delays")
+System_Ext(traffic, "Maps/Traffic API", "Road traffic, travel times")
+
+Rel(user, prioritypass, "Plans journey, views lounges & ride options")
+Rel(user, taxiapp, "Books & tracks rides")
+Rel(prioritypass, taxiapp, "Inventory sharing, booking deep‑links / Partner API")
+Rel(prioritypass, flight, "Flight status queries")
+Rel(prioritypass, traffic, "Travel time estimates")
+Rel(taxiapp, prioritypass, "Surfaces PP content via partner widget/API")
+@enduml
