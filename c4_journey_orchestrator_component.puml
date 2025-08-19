@@ -1,0 +1,16 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4.puml
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+Container_Boundary(journey, "Journey Orchestrator") {
+  Component(reco, "Departure Recommender", "Rule/ML", "Computes leave-by and arrive-by times")
+  Component(flightAdapter, "Flight Adapter", "HTTP client", "Cirium/Amadeus/FlightAware")
+  Component(trafficAdapter, "Traffic Adapter", "HTTP client", "Maps/Traffic provider")
+  Component(rideQuoteAdapter, "Ride Adapter", "HTTP client", "Taxi partner quotes & booking")
+}
+
+
+Rel(reco, flightAdapter, "Flight details")
+Rel(reco, trafficAdapter, "Travel time")
+Rel(reco, rideQuoteAdapter, "Quotes/booking")
+@enduml
